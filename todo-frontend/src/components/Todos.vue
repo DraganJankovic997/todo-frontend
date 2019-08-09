@@ -71,9 +71,6 @@ export default {
     .green {
         background-color: rgb(212, 228, 212);
     }
-    button {
-        height: 40px;
-        width: 100px;
-    }
+    
     
 </style>

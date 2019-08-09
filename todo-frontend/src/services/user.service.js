@@ -25,7 +25,9 @@ const ROUTES = {
 export default {
 
     login(data){
-        return axios.post(API + ROUTES.LOGIN, data);
+        return axios.post(API + ROUTES.LOGIN, data).catch((err)=>{
+            throw err;
+        });
     },
     register(data){
         return axios.post(API + ROUTES.REGISTER, data);
@@ -35,6 +37,5 @@ export default {
     },
     refresh(){
         return axios.post(API + ROUTES.REFRESH, data);
-    },
-    
+    },    
 };

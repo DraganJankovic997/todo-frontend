@@ -26,11 +26,12 @@ export default {
             let data = {};
             data['email'] = email;
             data['password'] = password;
-            this.login(data).then(()=>{
-                console.log('redirect iz thena');
+            this.login(data)
+            .then(()=>{
                 this.$router.push('/todo');
-            }, (err)=> {
-                return Promise.reject(err);
+            })
+            .catch((err) => {
+                console.log(err);
             });
         },
     }

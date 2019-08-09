@@ -22,29 +22,33 @@ export default {
 
     actions : {
         login({commit, state}, data){
-            userService.login(data).then( (res) => {
-                let token = res['data']['access_token'];
-                commit('LOGIN', token);
-                localStorage.setItem('token', token);
-                userService.me().then(res => {
-                    commit('USER', res['data']);
-                }, (err) => {
-                    Promise.reject(err);
+            return new Promise((resolve, reject) => {
+                userService.login(data)
+                .then( (res) => {
+                    let token = res['data']['access_token'];
+                    commit('LOGIN', token);
+                    localStorage.setItem('token', token);
+                    userService.me()
+                    .then(res => {
+                        commit('USER', res['data']);
+                        resolve(res);
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }).catch((err) => {
+                    commit('DELETE');
+                    reject(err);
                 });
-                
-                
-            
-            }, (err) => {
-                commit('DELETE');
-                Promise.reject(err);
             });
             
         },
         register({ dispatch }, data) {
-            userService.register(data).then( res => {
-                dispatch('login', data);
-            }, (err) => {
-                return Promise.reject(err);
+            return new Promise((resolve, reject) => {
+                userService.register(data).then( res => {
+                    resolve(dispatch('login', data));
+                }, (err) => {
+                    reject(err);
+                });
             });
         },
         checkToken({commit}) {

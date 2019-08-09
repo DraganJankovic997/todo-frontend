@@ -47,11 +47,15 @@ export default {
             })
         },
         getOne({commit}, id){
-            todoService.getOne(id).then((res) => {
-                commit('TODO', res['data']);
-            }, (err) => {
-                throw err;
-            })
+            return new Promise((resolve, reject) => {
+                todoService.getOne(id).then((res) => {
+                    commit('TODO', res['data']);
+                    resolve(res['data']);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+            
         },
         clear({commit}){
             commit('CLEARTODOS');
@@ -59,6 +63,5 @@ export default {
     },
     getters: {
         getTodos: (state) => state.todos,
-        getForEdit: (state) => state.forEdit
     }
 }

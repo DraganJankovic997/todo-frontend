@@ -30,7 +30,7 @@ export default {
 
             this.register(data).then(()=>{
                 this.$router.push('/todo');
-            }, (err)=> {
+            }).catch((err)=> {
                 console.log(err);
             });
         },

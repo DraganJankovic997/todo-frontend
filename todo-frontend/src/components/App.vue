@@ -93,5 +93,9 @@ a {
   background-color: darkblue;
   padding: 10px;
 }
+button {
+  height: 40px;
+  width: 100px;
+}
 
 </style>
