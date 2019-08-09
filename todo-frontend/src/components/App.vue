@@ -38,9 +38,19 @@ export default {
   methods: {
     
     ...mapActions('user', ['logout']),
+    ...mapActions('todo', ['clear']),
+
     callLogout(){
       localStorage.setItem('token', '');
-      this.logout();
+      this.logout().then(()=> {
+        this.clear().then(()=>{
+          this.$router.push('/login');
+        }, (err) => {
+          console.log(err);
+        });
+      }, (err) => {
+        console.log(err);
+      });
     },
     checkToken(){
       if(localStorage.getItem('token') != '') {

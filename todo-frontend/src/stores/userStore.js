@@ -22,19 +22,21 @@ export default {
 
     actions : {
         login({commit, state}, data){
-            userService.login(data).then( res => {
-                let t = res['data']['access_token'];
-                commit('LOGIN', t);
-                userService.setToken(state.token);
+            userService.login(data).then( (res) => {
+                let token = res['data']['access_token'];
+                commit('LOGIN', token);
+                localStorage.setItem('token', token);
                 userService.me().then(res => {
                     commit('USER', res['data']);
                 }, (err) => {
-                    console.log(err);
+                    Promise.reject(err);
                 });
+                
+                
             
-            }, err => {
+            }, (err) => {
                 commit('DELETE');
-                console.log(err);
+                Promise.reject(err);
             });
             
         },
@@ -42,7 +44,7 @@ export default {
             userService.register(data).then( res => {
                 dispatch('login', data);
             }, (err) => {
-                console.log(err);
+                return Promise.reject(err);
             });
         },
         checkToken({commit}) {
@@ -50,7 +52,7 @@ export default {
                 
             }, err => {
                 commit('DELETE');
-                console.log(err);
+                return Promise.reject(err);
             })
         },
         logout({commit}) {

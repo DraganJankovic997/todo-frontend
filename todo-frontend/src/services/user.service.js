@@ -1,5 +1,18 @@
 import axios from 'axios';
-
+axios.interceptors.request.use(
+    (config) => {
+      let token = localStorage.getItem('token');
+      if (token != '') {
+        config.headers['Authorization'] = 'Bearer ' + token;
+      }
+  
+      return config;
+    }, 
+  
+    (error) => {
+      return Promise.reject(error);
+    }
+);
 
 const API = 'http://localhost:8000/api';
 const ROUTES = {
@@ -23,27 +36,5 @@ export default {
     refresh(){
         return axios.post(API + ROUTES.REFRESH, data);
     },
-
-    setToken(token){
-        localStorage.setItem('token', token);
-        this.addHeader();
-    },
-    addHeader(){
-        axios.interceptors.request.use(
-            (config) => {
-              let token = localStorage.getItem('token');
-          
-              if (token != null) {
-                config.headers['Authorization'] = 'Bearer ' + token;
-              }
-          
-              return config;
-            }, 
-          
-            (error) => {
-              return Promise.reject(error);
-            }
-          );
-          
-    }
+    
 };

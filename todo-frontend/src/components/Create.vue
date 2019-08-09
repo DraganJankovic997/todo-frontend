@@ -24,7 +24,7 @@ export default {
         return {
             title: '',
             description: '',
-            priority: ''
+            priority: 'LOW'
         }
     },
     methods: {
@@ -37,7 +37,7 @@ export default {
             data['description'] = this.description;
             data['priority'] = this.priority;
             this.addTodo(data).then(()=> {
-                this.$router.push('/todos');
+                this.$router.push('/todo');
             }, (err) => {
                 console.log(err);
             });

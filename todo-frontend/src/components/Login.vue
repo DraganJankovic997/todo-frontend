@@ -4,7 +4,6 @@
         <p>Email: <input v-model="email" type="text" @></p>
         <p>Password: <input v-model="password" type="password"> </p>
         <button @click="callLogin(email, password)">Login</button>
-        <button @click="prikaz()">Prikaz</button>
     </div>
 </template>
 
@@ -27,13 +26,13 @@ export default {
             let data = {};
             data['email'] = email;
             data['password'] = password;
-            this.login(data);
+            this.login(data).then(()=>{
+                console.log('redirect iz thena');
+                this.$router.push('/todo');
+            }, (err)=> {
+                return Promise.reject(err);
+            });
         },
-
-        prikaz(){
-            this.checkToken();
-        }
-        
     }
 }
 </script>

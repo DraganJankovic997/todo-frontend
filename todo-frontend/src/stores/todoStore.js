@@ -12,6 +12,10 @@ export default {
         },
         TODO(state, data) {
             state.forEdit = data;
+        },
+        CLEARTODOS(state){
+            state.todos = [];
+            state.forEdit = null;
         }
     },
     actions: {
@@ -19,41 +23,42 @@ export default {
             todoService.getAll().then((res)=> {
                 commit('TODOS', res['data']);
             }, (err) => {
-                console.log(err.request);
+                throw err;
             });
         },
         deleteTodo({dispatch}, id){
             todoService.delete(id).then(() => {
                 dispatch('get');
             }, (err) => {
-                console.log(err);
+                throw err;
             });
         },
         addTodo({dispatch}, data){
             todoService.post(data).then(()=> {
                 dispatch('get');
             }, (err) => {
-                console.log(err);
-            })
+                throw err;            })
         },
-        editTodo({commit, dispatch}, payload){
+        editTodo({ dispatch}, payload){
             todoService.update(payload['data'], payload['id']).then(()=> {
                 dispatch('get');
             }, (err) => {
-                console.log(err);
+                throw err;
             })
         },
         getOne({commit}, id){
             todoService.getOne(id).then((res) => {
                 commit('TODO', res['data']);
             }, (err) => {
-                console.log(err);
+                throw err;
             })
+        },
+        clear({commit}){
+            commit('CLEARTODOS');
         }
     },
     getters: {
         getTodos: (state) => state.todos,
         getForEdit: (state) => state.forEdit
     }
-
 }

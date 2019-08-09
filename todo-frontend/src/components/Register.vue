@@ -28,7 +28,11 @@ export default {
             data['email'] = email;
             data['password'] = password;
 
-            this.register(data);
+            this.register(data).then(()=>{
+                this.$router.push('/todo');
+            }, (err)=> {
+                console.log(err);
+            });
         },
         
         

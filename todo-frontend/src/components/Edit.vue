@@ -39,9 +39,9 @@ export default {
             data['priority'] = this.getForEdit.priority;
             data['done'] = this.getForEdit.done;
             this.editTodo( {'id': this.$route.params.id, 'data': data}).then(()=> {
-                this.$router.push('/todos');
+                this.$router.push('/todo');
             }, (err) => {
-                console.log(err);
+                Promise.reject(err);
             })
         }
     },
