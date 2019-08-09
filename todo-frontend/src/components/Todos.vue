@@ -1,14 +1,13 @@
 <template>
     <div id="todos">
+        <button>Add todo</button>
         <div id="halo" v-for="todo in getTodos" v-bind:key="todo.id">
-            <div v-bind:class="[ 'red',  { 'green': todo.done }] " >
-                <h1> {{todo.title}} </h1>
-                <p> {{todo.description}} </p>
-                
-                <p> {{todo.priority}} </p>
-                <p> {{todo.done}} </p>
-                
+            <div id="maliHalo" v-bind:class="[ 'red',  { 'green': todo.done }] " >
 
+                {{todo.title}} {{todo.priority}}
+                <p> {{todo.description}} </p>
+                <button @click="deleteTodo(todo.id)">Delete</button>
+                <button @click="redirectEdit(todo.id)">Edit</button>
             </div>
         </div>
     </div>
@@ -29,37 +28,43 @@ export default {
         }
     },
     methods: {
-        ...mapActions('todo', ['get']),
-        gottem () {
-            this.get().then((res)=> {
-                console.log('done');
-            }, (err) => {
-                console.log(err);
-            });
-        }
+        ...mapActions('todo', ['get', 'deleteTodo']),
+
+        redirectEdit(id){
+            this.$router.push('todo/edit/' + id);
+        },
+
     },
     
     computed: {
         ...mapGetters('todo', ['getTodos']),
-
     }
     
 }
 </script>
 
-<style >
+<style stored>
     #halo {
         border: 1px solid black;
         width: 500px;
         margin: auto;
-        padding: 10px;
+        padding-top: 0px;
+        padding-bottom: 0px;
         margin-bottom: 10px;
     }
+    #malihalo {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding-top: 0px;
+        padding-right: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+    }
     .red {
-        background-color: red;
+        background-color: rgb(238, 171, 171);
     }
     .green {
-        background-color: green;
+        background-color: rgb(212, 228, 212);
     }
     
 </style>

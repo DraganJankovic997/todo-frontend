@@ -17,6 +17,19 @@ export default {
             }, (err) => {
                 console.log(err.request);
             });
+        },
+        deleteTodo({dispatch}, id){
+            todoService.delete(id).then(() => {
+                dispatch('get');
+            }, (err) => {
+                console.log(err);
+            });
+        },
+        addTodo({}, data){
+
+        },
+        editTodo({}, data, id){
+
         }
     },
     getters: {

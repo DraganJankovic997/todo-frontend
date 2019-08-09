@@ -24,12 +24,12 @@ export default {
         return axios.get(API + '/' + id);
     },
     post(data){
-        return axios.get(API, data);
+        return axios.post(API, data);
     },
     update(data, id){
-        return axios.get(API + '/' + id, data);
+        return axios.put(API + '/' + id, data);
     },
     delete(id){
-        return axios.get(API + '/' + id);
+        return axios.delete(API + '/' + id);
     }
 };
