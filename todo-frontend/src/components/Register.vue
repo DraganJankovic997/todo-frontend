@@ -1,9 +1,9 @@
 <template>
     <div id="register">
         <h3>Register</h3>
-        <p>Ime: <input v-model="name" type="text"></p>
+        <p>Name: <input v-model="name" type="text"></p>
         <p>Email: <input v-model="email" type="text"></p>
-        <p>Password: <input v-model="password" type="text"></p>
+        <p>Password: <input v-model="password" type="password"></p>
         <button @click="callRegister(name, email, password)">Register</button>
     </div>
 </template>

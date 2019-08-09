@@ -1,6 +1,5 @@
 <template>
     <div id="todos">
-        <button>Add todo</button>
         <div id="halo" v-for="todo in getTodos" v-bind:key="todo.id">
             <div id="maliHalo" v-bind:class="[ 'red',  { 'green': todo.done }] " >
 
@@ -18,10 +17,9 @@
 import { mapActions, mapGetters } from 'vuex';
 export default {
 
-    mounted() {
+    created() {
         if(localStorage.getItem('token') != ''){
             this.get().then((res)=> {
-                console.log('done');
             }, (err) => {
                 console.log(err);
             });

@@ -25,8 +25,12 @@ export default {
                 console.log(err);
             });
         },
-        addTodo({}, data){
-
+        addTodo({dispatch}, data){
+            todoService.post(data).then(()=> {
+                dispatch('get');
+            }, (err) => {
+                console.log(err);
+            })
         },
         editTodo({}, data, id){
 

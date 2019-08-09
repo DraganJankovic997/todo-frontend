@@ -1,24 +1,46 @@
 <template>
     <div>
-        <p>Title: <input type="text"></p>
-        <p>Description: <input type="text"></p>
+        <p>Title: <input v-model="title" type="text"></p>
+        <p>Description: <textarea v-model="description" rows="4" cols="50"></textarea></p>
         <p>Priority: 
-            <select>
-                <option value="LOW">LOW</option>
+            <select v-model= "priority">
+                <option selected="selected" value="LOW">LOW</option>
                 <option value="MEDIUM">MEDIUM</option>
                 <option value="HIGH">HIGH</option>
             </select>
         </p>
+
+        
+
 
         <button @click="submit()">Submit</button>
     </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
+    data () {
+        return {
+            title: '',
+            description: '',
+            priority: ''
+        }
+    },
     methods: {
+
+        ...mapActions('todo', ['addTodo']),
+
         submit(){
-            this.$router.push('/todos');
+            let data = {};
+            data['title'] = this.title;
+            data['description'] = this.description;
+            data['priority'] = this.priority;
+            this.addTodo(data).then(()=> {
+                this.$router.push('/todos');
+            }, (err) => {
+                console.log(err);
+            });
         }
     }
 }

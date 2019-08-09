@@ -2,7 +2,7 @@
     <div id="login">
         <h3>Login</h3>
         <p>Email: <input v-model="email" type="text" @></p>
-        <p>Password: <input v-model="password" type="text"> </p>
+        <p>Password: <input v-model="password" type="password"> </p>
         <button @click="callLogin(email, password)">Login</button>
         <button @click="prikaz()">Prikaz</button>
     </div>
