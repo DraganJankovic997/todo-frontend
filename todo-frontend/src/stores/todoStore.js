@@ -4,10 +4,14 @@ export default {
     namespaced: true,
     state: {
         todos: [],
+        forEdit: null
     },
     mutations: {
-        TODOS(state, t){
-            state.todos = t;
+        TODOS(state, data){
+            state.todos = data;
+        },
+        TODO(state, data) {
+            state.forEdit = data;
         }
     },
     actions: {
@@ -32,12 +36,24 @@ export default {
                 console.log(err);
             })
         },
-        editTodo({}, data, id){
-
+        editTodo({commit, dispatch}, payload){
+            todoService.update(payload['data'], payload['id']).then(()=> {
+                dispatch('get');
+            }, (err) => {
+                console.log(err);
+            })
+        },
+        getOne({commit}, id){
+            todoService.getOne(id).then((res) => {
+                commit('TODO', res['data']);
+            }, (err) => {
+                console.log(err);
+            })
         }
     },
     getters: {
         getTodos: (state) => state.todos,
+        getForEdit: (state) => state.forEdit
     }
 
 }
