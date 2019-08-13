@@ -10,7 +10,6 @@
 <script>
 
 import { mapActions } from 'vuex';
-import userService from '../services/user.service';
 
 export default {
     data: function () {

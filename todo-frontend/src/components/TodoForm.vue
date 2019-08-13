@@ -1,35 +1,39 @@
 <template>
     <div>
-        <p>Title: <input v-model="formData.title" type="text"></p>
-        <p>Description: <textarea v-model="formData.description" rows="4" cols="50"></textarea></p>
+        <p>Title: <input v-model="formData.title" type="text" @change="changed"></p>
+        <p>Description: <textarea v-model="formData.description" rows="4" cols="50" @change="changed"></textarea></p>
         <p>Priority: 
-            <select v-model="formData.priority">
-                <option v-for="(p, index) in constants['priority']" v-bind:key="index" 
+            <select v-model="formData.priority" @change="changed">
+                <option v-for="(p, index) in constants['priority']" :key="index" 
                 v-bind:value="p">{{ p }}</option>
             </select>
         </p>
-
+        <p v-if="canEditDone"> Done: <input type="checkbox" v-model="formData.done" @change="changed"></p>
         <button @click="submit">Submit</button>
+        <button @click="close" >Close</button>
     </div>
 </template>
 
 <script>
 import constants from '../constants';
 export default {
-    props : ['propTitle', 'propDescription', 'propPriority'],
+    props : ['propData', 'propCanEditDone'],
     data () {
         return {
-            formData : {
-                title: this.propTitle,
-                description: this.propDescription,
-                priority: this.propPriority,
-            },
+            formData : this.propData,
+            canEditDone: this.propCanEditDone,
             constants
         }
     },
     methods: {
-        submit(){
+        submit() {
             this.$emit('formSubmit', this.formData);
+        },
+        close() {
+            this.$emit('close');
+        },
+        changed(){
+            this.$emit('change', this.formData);
         }
     }
 }

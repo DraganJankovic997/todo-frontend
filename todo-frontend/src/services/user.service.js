@@ -1,24 +1,4 @@
-import axios from 'axios';
-axios.interceptors.request.use(
-    (config) => {
-      let token = localStorage.getItem('token');
-      if (token != '') {
-        config.headers['Authorization'] = 'Bearer ' + token;
-      }
-      return config;
-    }, (err)=> {
-        return err;
-    });
-
-//provera da li je code 401
-axios.interceptors.response.use((response) => {
-    return response;
-}, (err) => {
-    if(err.response.status == 401) localStorage.setItem('token', '');
-    console.log('Token expired');
-});
-
-
+import axios from '../axios';
 
 const API = 'http://localhost:8000/api';
 const ROUTES = {
@@ -31,7 +11,11 @@ const ROUTES = {
 export default {
 
     login(data){
-        return axios.post(API + ROUTES.LOGIN, data);
+        return axios.post(API + ROUTES.LOGIN, data)
+        .then((res) => {
+            this.addToken(res['data']['access_token']);
+            return res;
+        });
     },
     register(data){
         return axios.post(API + ROUTES.REGISTER, data);
@@ -41,5 +25,26 @@ export default {
     },
     refresh(){
         return axios.post(API + ROUTES.REFRESH, data);
+    },
+    addToken(token){
+        localStorage.setItem('token', token);
+    },
+    deleteToken(){
+        localStorage.removeItem('token');
+    },
+    getToken(){
+        return localStorage.getItem('token');
     },    
+
+    attachAuthorizationHeader(token) {
+        this.attachHeader('Authorization', "Bearer " + token);
+    },
+
+    isLoggedIn() {
+        return !!this.getToken();
+    },
+
+    attachHeader(header, value) {
+        axios.defaults.headers.common[header] = value;
+    }
 };

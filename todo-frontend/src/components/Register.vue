@@ -24,12 +24,17 @@ export default {
 
         ...mapActions('user', ['register', 'login', 'displayError']),
 
-        callRegister() {
-            this.register(this.user).then((res)=>{
-                this.$router.push('/todo');
-            }).catch((err)=> {
-                this.displayError(err.message);
-            });
+        async callRegister() {
+            try {
+                await this.register(this.user).then((res)=> {
+                    console.log(res);
+                    this.login(this.user).then(()=> {
+                        this.$router.push('/todo');
+                    })
+                });
+            } catch (err) {
+                this.displayError("register/login" + err);
+            }
         },
         
         

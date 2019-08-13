@@ -1,6 +1,6 @@
 <template>
     <div class="modal-backdrop">
-        <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
         <header class="modal-header">
             <slot>
                 This is the default tile!
@@ -10,7 +10,7 @@
         <footer class="modal-footer">
           <button type="button" class="btn-green" @click="close"> Close me! </button>
         </footer>
-    </div>
+      </div>
     </div>
 </template>
 

@@ -1,17 +1,22 @@
 <template>
     <div id="todos">
         <h1>TODOS: </h1>
-
-        <div id="halo" v-for="todo in getTodos" v-bind:key="todo.id">
+        <button @click="showCreate"> Create </button>
+        <div id="halo" v-for="todo in getTodos" :key="todo.id">
             <div id="maliHalo"  >
 
                 {{todo.title}} {{todo.priority}}
                 <p> {{todo.description}} </p>
                 <button @click="deleteTodo(todo.id)">Delete</button>
-                <button @click="redirectEdit(todo.id)">Edit</button>
-                <button v-bind:class="[ 'red',  { 'green': todo.done }]" @click="done(todo)" >Done</button>
+                <button @click="showEdit(todo.id)">Edit</button>
+                <button :class="[ 'red', { 'green': todo.done }]" @click="done(todo)" >{{todo.done}}</button>
             </div>
         </div>
+
+        <app-edit v-if="editDisplay" @closeEdit="showEdit(0)" :todo-id="propForEdit" />
+        <app-create v-if="createDisplay" @closeCreate="showCreate" />
+
+
     </div>
 </template>
 
@@ -19,24 +24,36 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 export default {
-
+    data() {
+        return {
+            createDisplay: false,
+            editDisplay: false,
+            propForEdit: 0,
+        }
+    },
     created() {
-            this.get().then((res)=> {
-            }, (err) => {
-                this.displayError(err.message);
-            });
-        
+        this.get().then((res)=> {
+        }, (err) => {
+            this.displayError(err.message);
+        });
+    
     },
     methods: {
         ...mapActions('todo', ['get', 'deleteTodo', 'editTodo']),
         ...mapActions('user', ['displayError']),
-
-        redirectEdit(id){
-            this.$router.push('todo/edit/' + id);
-        },
         done(todo){
-            todo.done = !todo.done;
-            this.editTodo({'id': todo.id, 'data': todo})
+            this.editTodo({...todo, done: !todo.done})
+            .then((data) => {
+                console.log(data)
+                // this.displayError('Task done !');
+            });
+        },
+        showCreate(){
+            this.createDisplay = !this.createDisplay;
+        },
+        showEdit(id){
+            this.propForEdit = id;
+            this.editDisplay = !this.editDisplay;
         }
 
     },

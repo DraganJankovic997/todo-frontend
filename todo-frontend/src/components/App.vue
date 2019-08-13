@@ -2,9 +2,17 @@
   <div id="app">
     <div style="margin-bottom: 200px;">
       <ul>
-        
 
-        <div v-if="this.provera() != true">
+        <div v-if="checkLocalStorage">
+          <li>
+            <button @click="callLogout"> Logout </button>
+          </li>
+          <li>
+            <router-link to="/todo"> Todos</router-link>
+          </li>
+        </div>
+        
+        <div v-else>
           <li>
             <router-link to="/Login"> Login </router-link>
           </li>
@@ -12,25 +20,14 @@
             <router-link to="/register"> Register </router-link>
           </li>
         </div>
-        <div v-if="this.provera() == true">
-          <li>
-            <button @click="callLogout"> Logout </button>
-          </li>
-          <li>
-            <router-link to="/todo"> Todos</router-link>
-          </li>
-          <li>
-            <router-link to="/todo/create"> Create</router-link>
-          </li>
-        </div>
 
 
       </ul>
     </div>
 
-    <modal v-show="getDisplay" @close="closeModal"> {{getMessage}} </modal>
+    <modal v-if="getDisplay" @close="closeModal"> {{getMessage}} </modal>
 
-    <router-view></router-view>
+    <router-view />
   </div>
 </template>
 
@@ -40,38 +37,32 @@ import modal from './Popup.vue';
 
 export default {
   name: 'app',
-  data() {
-    return {
-      isModalVisible: false
-    }
-  },
+  
   methods: {
     
-    ...mapActions('user', ['logout', 'checkLocalStorage', 'hideError', 'displayError', 'checkToken']),
+    ...mapActions('user', ['logout', 'hideError', 'displayError', 'checkToken']),
     ...mapActions('todo', ['clear']),
 
-    provera(){
-      return this.checkLocalStorage();
-    },
-
-    callLogout(){
-      localStorage.removeItem('token');
-      this.logout().then(()=> {
-        this.clear().then(()=>{
-          this.$router.push('/login');
-        }, (err) => {
-          this.displayError(err.message);
+    async callLogout(){
+      try {
+        await this.logout().then(()=> {
+          this.clear().then(()=>{
+            this.$router.push('/login');
+          });
         });
-      }, (err) => {
-        this.displayError(err.message);
-      });
+      } catch (err) {
+        this.displayError(err);
+      }
     },
     closeModal(){
       this.hideError();
-    }
+    },
   },
+  async created() {
+    await this.$store.dispatch('user/initialize')
+  },  
   computed: {
-    ...mapGetters('user', ['getDisplay', 'getMessage']),
+    ...mapGetters('user', ['getDisplay', 'getMessage', 'checkLocalStorage']),
   }
 }
 </script>

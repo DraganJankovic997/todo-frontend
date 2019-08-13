@@ -20,8 +20,11 @@ export default {
         ADD_TODO(state, newTodo){
             state.todos.push(newTodo);
         },
-        EDIT_TODO(state, payload){
-            state.todos[state.todos.indexOf(payload['oldTodo'])] = payload['newTodo'];
+        EDIT_TODO(state, newData){
+            let index = state.todos.findIndex((x) => x.id === newData['id']);
+            console.log(index)
+            state.todos.splice(index, 1, newData)
+            // state.todos[i] = newData;
         }
     },
     actions: {
@@ -39,21 +42,24 @@ export default {
                 dispatch('user/displayError', err.message, { root:true });
             });
         },
-        addTodo({commit, dispatch}, data){
+        addTodo({commit, dispatch, state}, data){
             return todoService.post(data)
                 .then((newTodo)=> {
-                    console.log(newTodo['data']);
                     commit('ADD_TODO', newTodo['data']);
+                    console.log(state.todos);
                     return newTodo['data'];
                 })
                 .catch((err) => {
                     dispatch('user/displayError', err.message, { root:true });
                 });
         },
-        editTodo({commit, dispatch}, payload){
-            return todoService.update(payload['data'], payload['id']).then((newData)=> {
-                commit('EDIT_TODO', { 'oldTodo': payload['data'], 'newTodo':  newData['data']});
-            }, (err) => {
+        editTodo({commit, dispatch}, forEdit) {
+            return todoService.update(forEdit, forEdit['id']).then((newData)=> {
+                commit('EDIT_TODO', newData['data']);
+                console.log(newData.data.done)
+            })
+            .catch((err) => {
+                console.log(err)
                 dispatch('user/displayError', err.message, { root:true });
             })
         },
