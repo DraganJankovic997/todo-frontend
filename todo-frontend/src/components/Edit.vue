@@ -1,62 +1,44 @@
 <template>
     <div id="editForm">
-        <p>Title: <input v-model="forEdit.title" type="text"></p>
-        <p>Description: <input v-model="forEdit.description" type="text"></p>
-        <p>Priority: 
-            <select v-model="forEdit.priority">
-                <option value="LOW">LOW</option>
-                <option value="MEDIUM">MEDIUM</option>
-                <option value="HIGH">HIGH</option>
-            </select>
-        </p>
-
-        <p>Done: <input v-model="forEdit.done" type="checkbox"></p>
-
-
-        <button @click="submit()">Submit</button>
+        <app-todo-form :propTitle="forEdit.title" :propDescription="forEdit.description" 
+        :propPriority="forEdit.priority" @formSubmit="updateNew($event)"></app-todo-form>
+        <p> Done: <input type="checkbox" v-model="getOne.done"></p>
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import constants from '../constants';
 
 export default {
     data () {
         return {
-            forEdit: {
-                'title' : '',
-                'description': '',
-                'priority': '',
-                'done': false
-            },
+            forEdit: null
         }
     },
-    created () {
-        this.getOne(this.$route.params.id)
-        .then((data) => {
-            this.forEdit = data;
-        }).catch((err) => {
-            console.log(err);
-        });
+    created() {
+        this.forEdit = {...this.getOne(this.$route.params.id)};
     },
     methods: {
 
-        ...mapActions('todo', ['getOne', 'editTodo']),
+        ...mapActions('todo', [, 'editTodo']),
+        ...mapActions('user', ['displayError']),
 
-        submit(){
-            var data = {};
-            data['title'] = this.forEdit.title;
-            data['description'] = this.forEdit.description;
-            data['priority'] = this.forEdit.priority;
-            data['done'] = this.forEdit.done;
-            this.editTodo({'id': this.$route.params.id, 'data': data})
-            .then(()=>{
+        updateNew(ev) {
+            ev['done'] = this.forEdit.done;
+            this.editTodo({'data': ev, 'id': this.$route.params.id})
+            .then(()=> {
                 this.$router.push('/todo');
-            }).catch((err) => {
-                console.log(err);
-            });
+            })
+            .catch((err)=> {
+                this.displayError(err.message);
+            })
         }
     },
+    computed: {
+        ...mapGetters('todo', ['getOne']),
+    },
+    
 }
 </script>
 

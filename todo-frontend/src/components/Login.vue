@@ -1,37 +1,36 @@
 <template>
     <div id="login">
         <h3>Login</h3>
-        <p>Email: <input v-model="email" type="text" @></p>
-        <p>Password: <input v-model="password" type="password"> </p>
-        <button @click="callLogin(email, password)">Login</button>
+        <p>Email: <input v-model="user.email" type="text" @></p>
+        <p>Password: <input v-model="user.password" type="password"> </p>
+        <button @click="callLogin">Login</button>
     </div>
 </template>
 
 <script>
 
 import { mapActions } from 'vuex';
-import userService from '../services/user.service.js';
+import userService from '../services/user.service';
 
 export default {
     data: function () {
         return {
-            email : 'test@test.com',
-            password: 'password'
+            user : {
+                email : 'test@test.com',
+                password: 'password'
+            }
         }
     },
     methods : {
-        ...mapActions('user', ['login', 'checkToken']),
+        ...mapActions('user', ['login', 'checkToken', 'displayError']),
 
-        callLogin(email, password){
-            let data = {};
-            data['email'] = email;
-            data['password'] = password;
-            this.login(data)
-            .then(()=>{
+        callLogin(){
+            this.login(this.user)
+            .then((res)=>{
                 this.$router.push('/todo');
             })
             .catch((err) => {
-                console.log(err);
+                this.displayError(err.message);
             });
         },
     }

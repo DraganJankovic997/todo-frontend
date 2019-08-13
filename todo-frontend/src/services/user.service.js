@@ -5,14 +5,20 @@ axios.interceptors.request.use(
       if (token != '') {
         config.headers['Authorization'] = 'Bearer ' + token;
       }
-  
       return config;
-    }, 
-  
-    (error) => {
-      return Promise.reject(error);
-    }
-);
+    }, (err)=> {
+        return err;
+    });
+
+//provera da li je code 401
+axios.interceptors.response.use((response) => {
+    return response;
+}, (err) => {
+    if(err.response.status == 401) localStorage.setItem('token', '');
+    console.log('Token expired');
+});
+
+
 
 const API = 'http://localhost:8000/api';
 const ROUTES = {
@@ -25,9 +31,7 @@ const ROUTES = {
 export default {
 
     login(data){
-        return axios.post(API + ROUTES.LOGIN, data).catch((err)=>{
-            throw err;
-        });
+        return axios.post(API + ROUTES.LOGIN, data);
     },
     register(data){
         return axios.post(API + ROUTES.REGISTER, data);

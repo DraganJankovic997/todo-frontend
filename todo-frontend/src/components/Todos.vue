@@ -21,15 +21,15 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
 
     created() {
-        if(localStorage.getItem('token') != ''){
             this.get().then((res)=> {
             }, (err) => {
-                console.log(err);
+                this.displayError(err.message);
             });
-        }
+        
     },
     methods: {
         ...mapActions('todo', ['get', 'deleteTodo', 'editTodo']),
+        ...mapActions('user', ['displayError']),
 
         redirectEdit(id){
             this.$router.push('todo/edit/' + id);

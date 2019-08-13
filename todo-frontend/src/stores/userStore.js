@@ -1,70 +1,95 @@
-import userService from '../services/user.service.js';
+import userService from '../services/user.service';
 
 export default {
     namespaced: true,
     state : {
         token: null,
-        user: null
+        user: null,
+        message: '',
+        showPopup: false
     },
 
     mutations : {
         LOGIN(state, t){
             state.token = t;
+            localStorage.setItem('token', t);
         },
         DELETE(state) {
             state.token = '';
             state.user = null;
+            localStorage.removeItem('token');
         },
         USER(state, u) {
             state.user = u;
+        },
+        DISPLAYERROR(state, message){
+            state.message = message;
+            state.showPopup = true;
+        },
+        HIDEERROR(state){
+            state.showPopup = false;
+            state.message = '';
         }
     },
 
     actions : {
-        login({commit, state}, data){
-            return new Promise((resolve, reject) => {
-                userService.login(data)
+        login({commit, dispatch}, data){
+            return userService.login(data)
                 .then( (res) => {
                     let token = res['data']['access_token'];
                     commit('LOGIN', token);
-                    localStorage.setItem('token', token);
-                    userService.me()
-                    .then(res => {
-                        commit('USER', res['data']);
-                        resolve(res);
-                    }).catch((err) => {
-                        reject(err);
-                    });
+                    return res;
                 }).catch((err) => {
                     commit('DELETE');
-                    reject(err);
+                    throw err;
                 });
-            });
             
         },
+
         register({ dispatch }, data) {
-            return new Promise((resolve, reject) => {
-                userService.register(data).then( res => {
-                    resolve(dispatch('login', data));
+            return userService.register(data).then( res => {
+                    dispatch('login', data);
+                    return res;
                 }, (err) => {
-                    reject(err);
+                    dispatch('displayError', err.message);
+                    throw err;
                 });
+        },
+
+        checkLocalStorage(){
+            return !!localStorage.getItem('token');
+        },
+
+        checkToken({dispatch}) {
+            dispatch('me').then(() => {
+                return true;
+            }, (err) => {
+                return false;
             });
         },
-        checkToken({commit}) {
-            userService.me().then(res => {
-                
-            }, err => {
+
+        me({commit, dispatch}) {
+            return userService.me()
+            .then(res => {
+                commit('USER', res['data']);
+            }).catch((err) => {
                 commit('DELETE');
-                return Promise.reject(err);
-            })
+            });
         },
         logout({commit}) {
             commit('DELETE');
+        },
+        displayError({commit}, message){
+            commit('DISPLAYERROR', message);
+        },
+        hideError({commit}){
+            commit('HIDEERROR');
         }
     },
 
     getters : {
         getToken : (state) => state.token,
+        getDisplay: (state) => state.showPopup,
+        getMessage: (state) => state.message,
     }
 }

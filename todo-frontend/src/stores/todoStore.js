@@ -1,4 +1,4 @@
-import todoService from '../services/todo.service.js';
+import todoService from '../services/todo.service';
 
 export default {
     namespaced: true,
@@ -16,46 +16,46 @@ export default {
         CLEARTODOS(state){
             state.todos = [];
             state.forEdit = null;
+        },
+        ADD_TODO(state, newTodo){
+            state.todos.push(newTodo);
+        },
+        EDIT_TODO(state, payload){
+            state.todos[state.todos.indexOf(payload['oldTodo'])] = payload['newTodo'];
         }
     },
     actions: {
-        get({commit}){
-            todoService.getAll().then((res)=> {
+        get({commit, dispatch}){
+            return todoService.getAll().then((res)=> {
                 commit('TODOS', res['data']);
             }, (err) => {
-                throw err;
+                dispatch('user/displayError', err.message, { root:true });
             });
         },
         deleteTodo({dispatch}, id){
-            todoService.delete(id).then(() => {
+            return todoService.delete(id).then(() => {
                 dispatch('get');
             }, (err) => {
-                throw err;
+                dispatch('user/displayError', err.message, { root:true });
             });
         },
-        addTodo({dispatch}, data){
-            todoService.post(data).then(()=> {
-                dispatch('get');
-            }, (err) => {
-                throw err;            })
-        },
-        editTodo({ dispatch}, payload){
-            todoService.update(payload['data'], payload['id']).then(()=> {
-                dispatch('get');
-            }, (err) => {
-                throw err;
-            })
-        },
-        getOne({commit}, id){
-            return new Promise((resolve, reject) => {
-                todoService.getOne(id).then((res) => {
-                    commit('TODO', res['data']);
-                    resolve(res['data']);
-                }).catch((err) => {
-                    reject(err);
+        addTodo({commit, dispatch}, data){
+            return todoService.post(data)
+                .then((newTodo)=> {
+                    console.log(newTodo['data']);
+                    commit('ADD_TODO', newTodo['data']);
+                    return newTodo['data'];
+                })
+                .catch((err) => {
+                    dispatch('user/displayError', err.message, { root:true });
                 });
-            });
-            
+        },
+        editTodo({commit, dispatch}, payload){
+            return todoService.update(payload['data'], payload['id']).then((newData)=> {
+                commit('EDIT_TODO', { 'oldTodo': payload['data'], 'newTodo':  newData['data']});
+            }, (err) => {
+                dispatch('user/displayError', err.message, { root:true });
+            })
         },
         clear({commit}){
             commit('CLEARTODOS');
@@ -63,5 +63,10 @@ export default {
     },
     getters: {
         getTodos: (state) => state.todos,
+        getOne: (state) => (id) => {
+            return state.todos.find((todo) => {
+                  return todo.id == id;
+            });
+        },
     }
 }

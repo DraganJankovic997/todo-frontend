@@ -2,7 +2,9 @@
   <div id="app">
     <div style="margin-bottom: 200px;">
       <ul>
-        <div v-if="checkToken() == false" >
+        
+
+        <div v-if="this.provera() != true">
           <li>
             <router-link to="/Login"> Login </router-link>
           </li>
@@ -10,9 +12,9 @@
             <router-link to="/register"> Register </router-link>
           </li>
         </div>
-        <div v-if="checkToken()">
+        <div v-if="this.provera() == true">
           <li>
-            <button @click="callLogout()"> Logout </button>
+            <button @click="callLogout"> Logout </button>
           </li>
           <li>
             <router-link to="/todo"> Todos</router-link>
@@ -21,44 +23,55 @@
             <router-link to="/todo/create"> Create</router-link>
           </li>
         </div>
+
+
       </ul>
     </div>
 
-
+    <modal v-show="getDisplay" @close="closeModal"> {{getMessage}} </modal>
 
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import modal from './Popup.vue';
 
 export default {
   name: 'app',
+  data() {
+    return {
+      isModalVisible: false
+    }
+  },
   methods: {
     
-    ...mapActions('user', ['logout']),
+    ...mapActions('user', ['logout', 'checkLocalStorage', 'hideError', 'displayError', 'checkToken']),
     ...mapActions('todo', ['clear']),
 
+    provera(){
+      return this.checkLocalStorage();
+    },
+
     callLogout(){
-      localStorage.setItem('token', '');
+      localStorage.removeItem('token');
       this.logout().then(()=> {
         this.clear().then(()=>{
           this.$router.push('/login');
         }, (err) => {
-          console.log(err);
+          this.displayError(err.message);
         });
       }, (err) => {
-        console.log(err);
+        this.displayError(err.message);
       });
     },
-    checkToken(){
-      if(localStorage.getItem('token') != '') {
-        return true;
-      } else {
-        return false;
-      }
+    closeModal(){
+      this.hideError();
     }
+  },
+  computed: {
+    ...mapGetters('user', ['getDisplay', 'getMessage']),
   }
 }
 </script>

@@ -1,10 +1,10 @@
 <template>
     <div id="register">
         <h3>Register</h3>
-        <p>Name: <input v-model="name" type="text"></p>
-        <p>Email: <input v-model="email" type="text"></p>
-        <p>Password: <input v-model="password" type="password"></p>
-        <button @click="callRegister(name, email, password)">Register</button>
+        <p>Name: <input v-model="user.name" type="text"></p>
+        <p>Email: <input v-model="user.email" type="text"></p>
+        <p>Password: <input v-model="user.password" type="password"></p>
+        <button @click="callRegister">Register</button>
     </div>
 </template>
 
@@ -13,25 +13,22 @@ import { mapActions } from 'vuex';
 export default {
     data : function () {
         return {
-            name: 'novitest',
-            email: 'novitest@gmail.com',
-            password: 'password'
+            user : {
+                name: 'novitest',
+                email: 'novitest@gmail.com',
+                password: 'password'
+            }
         }
     },
     methods: {
 
-        ...mapActions('user', ['register', 'login']),
+        ...mapActions('user', ['register', 'login', 'displayError']),
 
-        callRegister(name, email, password) {
-            var data = {};
-            data['name'] = name;
-            data['email'] = email;
-            data['password'] = password;
-
-            this.register(data).then(()=>{
+        callRegister() {
+            this.register(this.user).then((res)=>{
                 this.$router.push('/todo');
             }).catch((err)=> {
-                console.log(err);
+                this.displayError(err.message);
             });
         },
         

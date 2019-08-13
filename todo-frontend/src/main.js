@@ -10,7 +10,9 @@ import Register from './components/Register.vue';
 import Todos from './components/Todos.vue';
 import Create from './components/Create.vue';
 import Edit from './components/Edit.vue'
-import store from './store.js';
+import TodoForm from './components/TodoForm.vue';
+import Popup from './components/Popup.vue';
+import store from './store';
 
 Vue.use(VueRouter);
 Vue.use(Vuex);
@@ -22,6 +24,8 @@ const routes = [
   { path: '/todo/create', component: Create },
   { path: '/todo/edit/:id', component: Edit }
 ]
+Vue.component('modal', Popup);
+Vue.component('app-todo-form', TodoForm);
 
 const router = new VueRouter({
   routes: routes

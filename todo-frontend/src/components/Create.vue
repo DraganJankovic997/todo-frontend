@@ -1,46 +1,24 @@
 <template>
     <div>
-        <p>Title: <input v-model="title" type="text"></p>
-        <p>Description: <textarea v-model="description" rows="4" cols="50"></textarea></p>
-        <p>Priority: 
-            <select v-model= "priority">
-                <option selected="selected" value="LOW">LOW</option>
-                <option value="MEDIUM">MEDIUM</option>
-                <option value="HIGH">HIGH</option>
-            </select>
-        </p>
-
-        
-
-
-        <button @click="submit()">Submit</button>
+        <app-todo-form @formSubmit="addNew($event)" ></app-todo-form>
     </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex';
+
 export default {
-    data () {
-        return {
-            title: '',
-            description: '',
-            priority: 'LOW'
-        }
-    },
     methods: {
 
         ...mapActions('todo', ['addTodo']),
+        ...mapActions('userStore', ['displayError']),
 
-        submit(){
-            let data = {};
-            data['title'] = this.title;
-            data['description'] = this.description;
-            data['priority'] = this.priority;
-            this.addTodo(data).then(()=> {
+        addNew(ev){
+            this.addTodo(ev)
+            .then(()=> {
                 this.$router.push('/todo');
-            }, (err) => {
-                console.log(err);
-            });
+            }).catch((err)=> {console.log('huehue');});
+            
         }
     }
 }
